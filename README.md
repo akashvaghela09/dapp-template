@@ -9,7 +9,7 @@
 <p align="center">
 <img src="https://img.shields.io/website-up-down-green-red/http/solventx.in.svg" alt="website up"/>
 <img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" alt="maintained"/>
-<img src="https://img.shields.io/github/license/akashvaghela09/dapp-template.svg" alt="license"/>
+<img src="https://img.shields.io/badge/License-MIT-green" alt="license"/>
 </p>
 
 
@@ -39,6 +39,10 @@
     - [Setup Backend](#setup-backend)
     - [Setup frontend](#setup-frontend)
 - [Commands](#⚙-commands)
+- [Contributor](#👨🏻‍💻-contributor)
+- [Contact Me](#📩-contact-me-👇)
+
+
 ## 📥 Installation
 - Start by cloning the repo with following command
 ```
