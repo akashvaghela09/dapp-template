@@ -13,7 +13,7 @@
 </p>
 
 
-##  <a href="https://solventx.in" target="_blank" style="text-decoration: none"><h3 align="left">🌐 Demo</h3></a>
+##  <a href="https://solventx.in"><h3 align="left">🌐 Demo</h3></a>
 
 
 ## 🔧 Tech Stack 
@@ -73,19 +73,19 @@ npm start
 ```
 
 ## 👨🏻‍💻 Contributor
-- <a href="https://akashvaghela.dev" target="_blank" style="text-decoration: none"><h3>Akash Vaghela</h3></a>
+- <a href="https://akashvaghela.dev"><h3>Akash Vaghela</h3></a>
 
 ## 📩 Contact Me 👇
 
-<a href="https://github.com/akashvaghela09" target="_blank">
+<a href="https://github.com/akashvaghela09">
     <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
 </a>
-<a href="mailto:akashvaghela09@gmail.com" target="_blank">
+<a href="mailto:akashvaghela09@gmail.com">
     <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail"/>
 </a>
-<a href="https://linkedin.com/in/akashvaghela09" target="_blank">
+<a href="https://linkedin.com/in/akashvaghela09">
     <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
 </a>
-<a href="https://twitter.com/akashvaghela09" target="_blank">
+<a href="https://twitter.com/akashvaghela09">
     <img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter"/>
 </a>
