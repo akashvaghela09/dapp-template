@@ -13,7 +13,7 @@
 </p>
 
 
-##  <a href="https://solventx.in"><h3 align="left">🌐 Demo</h3></a>
+##  [🌐 Demo](https://solventx.in)
 
 
 ## 🔧 Tech Stack 
@@ -77,7 +77,8 @@ npm start
 ```
 
 ## 👨🏻‍💻 Contributor
-- <a href="https://akashvaghela.dev"><h3>Akash Vaghela</h3></a>
+- ## [Akash Vaghela](https://akashvaghela.dev)
+
 
 ## 📩 Contact Me 👇
 
