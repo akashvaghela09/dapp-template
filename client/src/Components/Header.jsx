@@ -1,7 +1,17 @@
 import React from 'react';
 import { Wallet } from './Wallet';
+import { AiFillHome, AiFillGithub, AiOutlineMail } from 'react-icons/ai';
+import { MdDashboard, MdOutlineContactMail } from 'react-icons/md';
+import { useNavigate } from 'react-router';
 
 const Header = () => {
+
+    let navigate = useNavigate();
+
+    const handleRoute = (para) => {
+        navigate(`/${para}`)
+    }
+
     // const 
     return (
         <div className='bg-blue-700 h-fit flex sticky top-0 left-0 select-none'>
@@ -11,9 +21,28 @@ const Header = () => {
             </a>
             <div className='flex grow justify-end items-center md:divide-x-2 divide-slate-500 md:pr-4'>
                 <div className='hidden md:flex'>
-                    <a href='https://example.com' className='h-fit text-xl text-slate-200 mx-3'>DashBoard</a>
-                    <a href='https://example.com' className='h-fit text-xl text-slate-200 mx-3'>Contact Me</a>
-                    <a href='https://example.com' className='h-fit text-xl text-slate-200 mx-3'>GitHub</a>
+                    <p onClick={() => handleRoute("dashboard")} className='h-fit text-xl text-slate-200 mx-3'>DashBoard</p>
+                    <p onClick={() => handleRoute("contact-me")} className='h-fit text-xl text-slate-200 mx-3'>Contact Me</p>
+                    <p onClick={() => window.open(`https://github.com/akashvaghela09`, '_blank')} className='h-fit text-xl text-slate-200 mx-3'>GitHub</p>
+                </div>
+
+                <div className=' flex justify-around fixed bg-blue-700 bottom-0 left-0 w-full h-fit md:hidden'>
+                    <div className="flex items-center flex-col m-2">
+                        <AiFillHome onClick={() => handleRoute("")} className='fill-slate-100 text-3xl cursor-pointer' />
+                        <p className="text-slate-300">Home</p>
+                    </div>
+                    <div className="flex items-center flex-col m-2">
+                        <MdDashboard onClick={() => handleRoute("dashboard")} className='fill-slate-300 text-3xl cursor-pointer' />
+                        <p className="text-slate-300">Dashboard</p>
+                    </div>
+                    <div className="flex items-center flex-col m-2">
+                        <AiOutlineMail onClick={() => handleRoute("contact-me")} className='fill-slate-300 text-3xl cursor-pointer' />
+                        <p className="text-slate-300">Contact Me</p>
+                    </div>
+                    <div className="flex items-center flex-col m-2">
+                        <AiFillGithub onClick={() => window.open(`https://github.com/akashvaghela09`, '_blank')} className='fill-slate-300 text-3xl cursor-pointer' />
+                        <p className="text-slate-300">GitHub</p>
+                    </div>
                 </div>
                 <Wallet />
             </div>
