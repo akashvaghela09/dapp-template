@@ -1,17 +1,11 @@
-import React, { useEffect } from "react";
-import styles from "../Styles/Dashboard.module.css";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import React from 'react';
 
 const Dashboard = () => {
-    const dispatch = useDispatch();
-    const location = useLocation();
-  
     return (
-        <div className={styles.wrapper}>
-            Dashboard Page
+        <div className='h-full flex justify-center items-center'>
+            <h1 className='text-3xl text-slate-200 p-10'>Dashboard</h1>
         </div>
-    );
-};
+    )
+}
 
-export { Dashboard };
+export { Dashboard }

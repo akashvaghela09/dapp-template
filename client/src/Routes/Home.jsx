@@ -1,47 +1,75 @@
-import React, { useEffect, useState } from "react";
-import styles from "../Styles/Home.module.css";
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
 import { setLoading } from "../Redux/app/actions"
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
 const Home = () => {
     const dispatch = useDispatch();
-    const location = useLocation();
-
-    const [nameState, setNameState] = useState("");
+    const [name, setName] = useState('');
     const [nameString, setNameString] = useState("");
+    const [saveMethodLoading, setSaveMethodLoading] = useState(false);
 
-    const { isLoading } = useSelector((state) => state.app);
     const {
         contract
-    } = useSelector((state) => state.app);
+    } = useSelector(state => state.app)
 
-    const handleGetMethod = async () => {
-        dispatch(setLoading(true))
-        let tempName = await contract.getName();
-        setNameState(tempName);
-        dispatch(setLoading(false))
+    const getName = async (n = 10) => {
+        setSaveMethodLoading(true)
 
+        if (n <= 0) {
+            setSaveMethodLoading(false)
+            return;
+        } else {
+            setTimeout(async () => {
+                try {
+                    let tempName = await contract.getName()
+                    if (tempName === name) {
+                        getName(n - 1)
+                    } else {
+                        setName(tempName)
+                        setSaveMethodLoading(false)
+                        return;
+                    }
+                } catch (error) {
+                    setSaveMethodLoading(false)
+                    return;
+                }
+            }, 2000);
+        }
     }
 
-    const handleSetMethod = async() => {
+    const handleSubmit = async () => {
         dispatch(setLoading(true))
-        await contract.setName(nameString);
+        await contract.setName(nameString)
+        dispatch(setLoading(false))
+        getName()
         setNameString("")
-        dispatch(setLoading(false))
     }
-    return (
-        <div className={styles.wrapper}>
-            <div className={styles.card}>
-                <p className={styles.cardText}>{nameState}</p>
-                <button onClick={handleGetMethod} className={styles.cardBtn}>Get Name</button>
-            </div>
-            <div className={styles.card}>
-                <input value={nameString} onChange={(e) => setNameString(e.target.value)} className={styles.cardInput}/>
-                <button onClick={handleSetMethod} className={styles.cardBtn}>Set Name</button>
-            </div>
-        </div>
-    );
-};
 
-export { Home };
+    useEffect(() => {
+        (async () => {
+            try {
+                let tempName = await contract.getName()
+                setName(tempName)
+            } catch (err) {
+                console.log(err);
+            }
+        })()
+    }, [contract]);
+
+    return (
+        <div className='h-full flex justify-center items-center flex-col'>
+            <h1 className='text-3xl text-slate-200 p-10'>User Name : {name === "" ? "Unknown" : name}</h1>
+            <input className='p-2 m-2 rounded text-xl w-52' value={nameString} onChange={(e) => setNameString(e.target.value)} />
+
+            {
+                saveMethodLoading === true ?
+                    <button className='flex justify-center items-center active:translate-y-1 p-2 m-2 mb-36 rounded text-xl text-slate-300 bg-blue-500 w-52'><AiOutlineLoading3Quarters className='mx-4 text-2xl animate-spin' /> Setting ...</button>
+                    :
+                    <button className='p-2 m-2 mb-36 rounded text-xl text-slate-300 bg-blue-500 w-52' onClick={() => handleSubmit()}>Set Name</button>
+            }
+        </div>
+    )
+}
+
+export { Home }
