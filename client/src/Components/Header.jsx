@@ -1,6 +1,6 @@
 import React from 'react';
 import { Wallet } from './Wallet';
-import { AiFillHome, AiFillGithub, AiOutlineMail } from 'react-icons/ai';
+import { AiFillHome, AiFillGithub, AiOutlineMail, AiOutlineQuestionCircle } from 'react-icons/ai';
 import { MdDashboard, MdOutlineContactMail } from 'react-icons/md';
 import { useNavigate } from 'react-router';
 
@@ -28,21 +28,21 @@ const Header = () => {
 
                 <div className=' flex justify-around fixed bg-blue-500 bottom-0 left-0 w-full h-fit md:hidden'>
                     <div className="flex items-center flex-col m-2">
-                        <AiFillHome onClick={() => handleRoute("")} className='fill-slate-100 text-3xl cursor-pointer' />
-                        <p className="text-slate-300">Home</p>
+                        <AiFillHome onClick={() => handleRoute("")} className='fill-slate-100 text-2xl cursor-pointer' />
+                        <p className="text-slate-300 text-sm">Home</p>
                     </div>
                     <div className="flex items-center flex-col m-2">
-                        <MdDashboard onClick={() => handleRoute("dashboard")} className='fill-slate-300 text-3xl cursor-pointer' />
-                        <p className="text-slate-300">Dashboard</p>
+                        <MdDashboard onClick={() => handleRoute("dashboard")} className='fill-slate-100 text-2xl cursor-pointer' />
+                        <p className="text-slate-300 text-sm">Dashboard</p>
                     </div>
                     <div className="flex items-center flex-col m-2">
-                        <AiOutlineMail onClick={() => handleRoute("contact-me")} className='fill-slate-300 text-3xl cursor-pointer' />
-                        <p className="text-slate-300">Contact Me</p>
+                        <AiOutlineQuestionCircle onClick={() => handleRoute("contact-me")} className='fill-slate-100 text-2xl cursor-pointer' />
+                        <p className="text-slate-300 text-sm">Help</p>
                     </div>
-                    <div className="flex items-center flex-col m-2">
+                    {/* <div className="flex items-center flex-col m-2">
                         <AiFillGithub onClick={() => window.open(`https://github.com/akashvaghela09`, '_blank')} className='fill-slate-300 text-3xl cursor-pointer' />
                         <p className="text-slate-300">GitHub</p>
-                    </div>
+                    </div> */}
                 </div>
                 <Wallet />
             </div>

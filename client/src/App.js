@@ -5,7 +5,7 @@ import { AllRoutes } from './Routes/AllRoutes';
 
 function App() {
   return (
-    <div className="bg-slate-200 h-screen max-h-screen">
+    <div className="bg-slate-900 h-screen max-h-screen">
       <Header />
       <AllRoutes />
       <Footer />
