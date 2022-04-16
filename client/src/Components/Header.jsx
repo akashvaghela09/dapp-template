@@ -14,7 +14,7 @@ const Header = () => {
 
     // const 
     return (
-        <div className='bg-blue-700 h-fit flex sticky top-0 left-0 select-none'>
+        <div className='bg-blue-500 h-fit flex sticky top-0 left-0 select-none'>
             <a href="https://akashvaghela.dev" target="_blank" rel='noreferrer' className='md:pl-4 flex h-fit items-center w-fit cursor-pointer'>
                 <img src='logo.png' alt="dapp logo" className='w-8 h-8 m-3' />
                 <p className="h-fit text-2xl text-slate-200 cursor-pointer font-medium">Dapp Template</p>
@@ -26,7 +26,7 @@ const Header = () => {
                     <p onClick={() => window.open(`https://github.com/akashvaghela09`, '_blank')} className='h-fit text-xl text-slate-200 mx-3'>GitHub</p>
                 </div>
 
-                <div className=' flex justify-around fixed bg-blue-700 bottom-0 left-0 w-full h-fit md:hidden'>
+                <div className=' flex justify-around fixed bg-blue-500 bottom-0 left-0 w-full h-fit md:hidden'>
                     <div className="flex items-center flex-col m-2">
                         <AiFillHome onClick={() => handleRoute("")} className='fill-slate-100 text-3xl cursor-pointer' />
                         <p className="text-slate-300">Home</p>
