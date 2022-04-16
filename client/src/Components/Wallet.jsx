@@ -1,78 +1,144 @@
 import React, { useState } from 'react';
-import { abi } from "../helper";
+import { useDispatch, useSelector } from "react-redux";
+// import { useLocation, useNavigate } from "react-router-dom";
 import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
-import { AiOutlineLoading3Quarters, AiFillCaretUp } from 'react-icons/ai';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { BiCopy } from 'react-icons/bi';
 import { FaUserCircle, FaEthereum } from 'react-icons/fa';
 import { Fade } from "react-awesome-reveal";
-import { IoWalletOutline, IoWallet } from 'react-icons/io5';
+import { IoWalletOutline } from 'react-icons/io5';
 import { GoLinkExternal } from 'react-icons/go';
 import { SiHiveBlockchain } from 'react-icons/si';
 import { FiLogOut } from 'react-icons/fi';
-// let contractObj = new ethers.Contract(
-//     "0x15C93058E8662660A4e2Cb906819995A5752f2da",
-//     abi,
-//     mySigner
-// );
+import { setAlert, setContractInstance, setIsAuth, setLoading, setWallet, setWalletModal } from "../Redux/app/actions"
+import { ethers } from "ethers";
+import myContractData from "../artifacts/contracts/Test.sol/Test.json";
+import { metamask, metaMaskChecker } from '../Utils/metamaskChecker';
 
 const Wallet = () => {
-    const [status, setStatus] = useState(false);
-    const [profileModal, setProfileModal] = useState(false);
+    const dispatch = useDispatch();
+    // const location = useLocation();
 
-    const [auth, setAuth] = useState(false);
+    const [profileModal, setProfileModal] = useState(false);
     const [guestWalletLoading, setGuestWalletLoading] = useState(false)
     const [userWalletLoading, setUserWalletLoading] = useState(false)
     const [logoutLoading, setLogoutLoading] = useState(false)
+    
+    const abi = myContractData.abi;
+    const contract_address = process.env.REACT_APP_CONTRACT_ADDRESS;
 
-    let add = "0X15...f2da";
-    let network = "rinkeby";
-    let amount = "5.00...3123"
-    let name = "MetaMask"
-    let wallet = {
-        accounts: [add]
-    }
+    const {
+        isAuth,
+        wallet,
+        walletModal
+    } = useSelector(state => state.app)
 
-    const checkAuth = () => {
-        if (auth === true) {
+    const checkAuthStatus = () => {
+        if (isAuth === true) {
             setProfileModal(!profileModal)
         } else {
-            setStatus(true)
+            dispatch(setWalletModal(true))
         }
     }
 
-    const handleWalletConnect = (para) => {
+    const handleWalletUser = async (para) => {
         if (para === "user") {
             setUserWalletLoading(true);
-            setTimeout(() => {
+            setTimeout(async () => {
                 setUserWalletLoading(false);
-                setAuth(true);
-                setStatus(false)
-            }, 2500);
+                let response = await metaMaskChecker();
+
+                if(response.available === true){
+                    connectWallet(para)
+                } else {
+                    dispatch(setWalletModal(false))
+                    dispatch(setAlert(response.obj))
+                }
+            }, 1500);
         } else if (para === "guest") {
             setGuestWalletLoading(true);
             setTimeout(() => {
                 setGuestWalletLoading(false);
-                setAuth(true);
-                setStatus(false)
+                connectWallet(para)
             }, 2500);
         }
+    }
+
+    const connectWallet = async (para) => {
+        dispatch(setWalletModal(false))
+        dispatch(setLoading(true));
+        let walletObj = { "name": "MetaMask" }
+        walletObj.accounts = await metamask.requestAccounts()
+        walletObj.balance = await metamask.getBalance()
+        walletObj.network = await metamask.chainId()
+        walletObj.isConnected = await metamask.isConnected()
+        
+        if(para === "user"){
+            dispatch(setWallet(walletObj));
+            dispatch(setIsAuth(true))
+    
+            const ethersProvider = new ethers.providers.Web3Provider(window.ethereum, "any");
+            let mySigner = ethersProvider.getSigner();
+    
+            let contractObj = new ethers.Contract(
+                contract_address,
+                abi,
+                mySigner
+            );
+    
+            dispatch(setContractInstance(contractObj))
+        } else if (para === "guest"){
+            dispatch(setWallet({ "name": "MetaMask", "accounts": ['0x000000000000000000000000'], "balance": "0.0000000000000", "network": "0x4", "isConnected": true }));
+            dispatch(setIsAuth(true))
+    
+            const ethersProvider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RINKEBY_URL);
+            const guestWallet = new ethers.Wallet(process.env.REACT_APP_PRIVATE_KEY, ethersProvider);
+            let mySigner = guestWallet.connect(ethersProvider)
+    
+            let contractObj = new ethers.Contract(
+                contract_address,
+                abi,
+                mySigner
+            );
+
+            dispatch(setContractInstance(contractObj))
+        }
+        
+        dispatch(setLoading(false));
     }
 
     const handleLogOut = () => {
         setLogoutLoading(true);
         setTimeout(() => {
-        setLogoutLoading(false);
-            setAuth(false)
-            setProfileModal(false)
-        }, 2000);
+            setLogoutLoading(false);
+            setProfileModal(!profileModal)
+            dispatch(setIsAuth(false))
+            dispatch(setWalletModal(false))
+            dispatch(setWallet({}))
+        }, 1500);
+    }
+
+    const networkObj = {
+        "0x1": "MainNet",
+        "0x3": "Ropsten",
+        "0x4": "Rinkeby",
+        "0x42": "Kovan"
+    }
+
+    const concatString = (para = "") => {
+        let adr = para.split("")
+        let start = adr.slice(0, 4).join("")
+        let end = adr.slice(-4).join("")
+        let string = `${start}...${end}`
+        return string;
     }
 
     return (
         <>
             <div className='px-4' >
-                <MdOutlineAccountBalanceWallet className='fill-slate-300 text-3xl cursor-pointer hover:fill-slate-900 transition ease-in' onClick={() => checkAuth()} />
+                <MdOutlineAccountBalanceWallet className='fill-slate-300 text-3xl cursor-pointer hover:fill-slate-900 transition ease-in' onClick={() => checkAuthStatus()} />
                 {
-                    auth === true ?
+                    isAuth === true ?
                         <div className='border-2 border-slate-200 rounded-full w-3 h-3 bg-green-500 absolute bottom-3 right-3 md:right-7' />
                         :
                         <div className='border-2 border-slate-200 rounded-full w-3 h-3 bg-slate-500 absolute bottom-3 right-3 md:right-7' />
@@ -80,14 +146,14 @@ const Wallet = () => {
             </div>
 
             {
-                status === true &&
+                walletModal === true &&
                 <div>
-                    <div className='fixed top-0 px-2 left-0 bg-gray-900/30 backdrop-blur-sm w-screen h-screen' onClick={() => setStatus(!status)} ></div>
+                    <div className='fixed top-0 px-2 left-0 bg-gray-900/30 backdrop-blur-sm w-screen h-screen' onClick={() => dispatch(setWalletModal(false))} ></div>
                     <Fade>
                         <div className='flex flex-col items-center justify-center fixed top-1/2 left-1/2 h-fit py-8 w-3/4 md:w-1/3 border-none bg-slate-700 shadow-lg rounded-md translate-x-[-50%] translate-y-[-50%]'>
                             {
                                 userWalletLoading === false ?
-                                    <button onClick={() => handleWalletConnect("user")} className='active:translate-y-1 bg-blue-500 text-neutral-100 rounded-md w-4/5 py-2 m-2 text-xl hover:bg-blue-600'>Connect your Wallet</button>
+                                    <button onClick={() => handleWalletUser("user")} className='active:translate-y-1 bg-blue-500 text-neutral-100 rounded-md w-4/5 py-2 m-2 text-xl hover:bg-blue-600'>Connect your Wallet</button>
                                     :
                                     <button className='flex justify-center items-center active:translate-y-1 bg-blue-600 text-neutral-100 rounded-md w-4/5 py-2 m-2 text-xl '> <AiOutlineLoading3Quarters className='mx-4 text-2xl animate-spin' /> Connecting ...</button>
 
@@ -99,7 +165,7 @@ const Wallet = () => {
                             </div>
                             {
                                 guestWalletLoading === false ?
-                                    <button onClick={() => handleWalletConnect("guest")} className='active:translate-y-1 bg-blue-500 text-neutral-100 rounded-md w-4/5 py-2 m-2 text-xl hover:bg-blue-600'>Continue as a guest</button>
+                                    <button onClick={() => handleWalletUser("guest")} className='active:translate-y-1 bg-blue-500 text-neutral-100 rounded-md w-4/5 py-2 m-2 text-xl hover:bg-blue-600'>Continue as a guest</button>
                                     :
                                     <button className='flex justify-center items-center active:translate-y-1 bg-blue-600 text-neutral-100 rounded-md w-4/5 py-2 m-2 text-xl'> <AiOutlineLoading3Quarters className='mx-4 text-2xl animate-spin' /> Processing ...</button>
 
@@ -115,7 +181,7 @@ const Wallet = () => {
                 <div className='absolute top-[65px] right-2  w-fit h-fit flex flex-col items-center rounded bg-slate-700 py-2 drop-shadow-[-4px_5px_12px_rgba(5,8,15,0.77)]'>
                     <FaUserCircle className='text-6xl text-slate-300 my-4' />
                     <div className='flex items-center p-2 px-4'>
-                        <p className='text-slate-300 m-1'>ETH : {add}</p>
+                        <p className='text-slate-300 m-1'>ETH : {concatString(wallet.accounts[0])}</p>
                         <BiCopy onClick={() => navigator.clipboard.writeText(wallet.accounts[0])} className="m-1 text-xl fill-slate-300 active:translate-y-1 cursor-pointer" />
                         <GoLinkExternal onClick={() => window.open(`https://rinkeby.etherscan.io/address/${wallet.accounts[0]}`, '_blank')} className="m-1 text-xl fill-slate-300 active:translate-y-1 cursor-pointer" />
                     </div>
@@ -123,28 +189,28 @@ const Wallet = () => {
                         <FaEthereum className="fill-slate-300 m-1 text-xl" />
                         <div className="flex grow justify-between">
                             <p className="text-slate-300 px-2">Balance</p>
-                            <p className="text-slate-300 px-2">{amount}</p>
+                            <p className="text-slate-300 px-2">{concatString(wallet.balance)}</p>
                         </div>
                     </div>
                     <div className='flex items-center border-[1px] border-slate-600 w-full'>
                         <IoWalletOutline className="text-slate-300 m-1 text-xl" />
                         <div className="flex grow justify-between">
                             <p className="text-slate-300 px-2">Wallet</p>
-                            <p className="text-slate-300 px-2">{name}</p>
+                            <p className="text-slate-300 px-2">{wallet.name}</p>
                         </div>
                     </div>
                     <div className='flex items-center border-[1px] border-slate-600 w-full'>
                         <SiHiveBlockchain className="fill-slate-300 m-1 text-xl" />
                         <div className="flex grow justify-between">
                             <p className="text-slate-300 px-2">Network</p>
-                            <p className="text-slate-300 px-2">{network}</p>
+                            <p className="text-slate-300 px-2">{networkObj[wallet.network]}</p>
                         </div>
                     </div>
                     {
                         logoutLoading === false ?
-                        <button onClick={() => handleLogOut()} className='flex justify-center items-center active:translate-y-1 bg-blue-500 text-neutral-100 rounded-md w-4/5 py-2 m-2 text-xl'> LogOut <FiLogOut className='mx-2 text-2xl' /></button>
-                        :
-                        <button className='flex justify-center items-center active:translate-y-1 bg-blue-500 text-neutral-100 rounded-md w-4/5 py-2 m-2 text-xl'> LogOut <AiOutlineLoading3Quarters className='mx-2 text-2xl animate-spin' /></button>
+                            <button onClick={() => handleLogOut()} className='flex justify-center items-center active:translate-y-1 bg-blue-500 text-neutral-100 rounded-md w-4/5 py-2 m-2 text-xl'> Log Out <FiLogOut className='mx-2 text-2xl' /></button>
+                            :
+                            <button className='flex justify-center items-center active:translate-y-1 bg-blue-500 text-neutral-100 rounded-md w-4/5 py-2 m-2 text-xl'> Log Out <AiOutlineLoading3Quarters className='mx-2 text-2xl animate-spin' /></button>
                     }
                 </div>
             }

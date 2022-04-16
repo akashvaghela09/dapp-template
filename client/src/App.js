@@ -1,4 +1,5 @@
 import './App.css';
+import { useSelector } from 'react-redux';
 import { Alert } from './Components/Alert';
 import { Error } from './Components/Error';
 import { Footer } from './Components/Footer';
@@ -7,9 +8,11 @@ import { Spinner } from './Components/Spinner';
 import { AllRoutes } from './Routes/AllRoutes';
 
 function App() {
-  const err = false;
-  const alert = false;
-  const loading = false;
+  const {
+    isError,
+    isLoading,
+    isAlert
+  } = useSelector(state => state.app)
 
   return (
     <div className="bg-slate-900 h-screen max-h-screen">
@@ -17,16 +20,14 @@ function App() {
     <Header />
     <AllRoutes />
     <Footer />
-      {
-        err === true && <Error />
+{
+        isLoading === true && <Spinner />
       }
-
       {
-        alert === true && <Alert />
+        isError === true && <Error />
       }
-
       {
-        loading === true && <Spinner />
+        isAlert.status === true && <Alert />
       }
     </div>
   );
