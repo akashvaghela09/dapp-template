@@ -67,13 +67,13 @@ const Wallet = () => {
     const connectWallet = async (para) => {
         dispatch(setWalletModal(false))
         dispatch(setLoading(true));
-        let walletObj = { "name": "MetaMask" }
-        walletObj.accounts = await metamask.requestAccounts()
-        walletObj.balance = await metamask.getBalance()
-        walletObj.network = await metamask.chainId()
-        walletObj.isConnected = await metamask.isConnected()
         
         if(para === "user"){
+            let walletObj = { "name": "MetaMask" }
+            walletObj.accounts = await metamask.requestAccounts()
+            walletObj.balance = await metamask.getBalance()
+            walletObj.network = await metamask.chainId()
+            walletObj.isConnected = await metamask.isConnected()
             dispatch(setWallet(walletObj));
             dispatch(setIsAuth(true))
     
@@ -91,7 +91,7 @@ const Wallet = () => {
             dispatch(setWallet({ "name": "MetaMask", "accounts": ['0x000000000000000000000000'], "balance": "0.0000000000000", "network": "0x4", "isConnected": true }));
             dispatch(setIsAuth(true))
     
-            const ethersProvider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_RINKEBY_URL);
+            const ethersProvider = ethers.getDefaultProvider(process.env.REACT_APP_RINKEBY_URL);
             const guestWallet = new ethers.Wallet(process.env.REACT_APP_PRIVATE_KEY, ethersProvider);
             let mySigner = guestWallet.connect(ethersProvider)
     

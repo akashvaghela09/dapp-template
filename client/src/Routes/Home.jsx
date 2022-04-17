@@ -13,34 +13,49 @@ const Home = () => {
         contract
     } = useSelector(state => state.app)
 
+    // =>> Get the name from the contract by calling recursively --- not recommended
+    // const getName = async (n = 10) => {
+    //     setSaveMethodLoading(true)
+
+    //     if (n <= 0) {
+    //         setSaveMethodLoading(false)
+    //         return;
+    //     } else {
+    //         setTimeout(async () => {
+    //             try {
+    //                 let tempName = await contract.getName()
+    //                 if (tempName === name) {
+    //                     getName(n - 1)
+    //                 } else {
+    //                     setName(tempName)
+    //                     setSaveMethodLoading(false)
+    //                     return;
+    //                 }
+    //             } catch (error) {
+    //                 setSaveMethodLoading(false)
+    //                 return;
+    //             }
+    //         }, 2000);
+    //     }
+    // }
+
     const getName = async (n = 10) => {
         setSaveMethodLoading(true)
-
-        if (n <= 0) {
+        try {
+            let tempName = await contract.getName()
+            setName(tempName)
             setSaveMethodLoading(false)
             return;
-        } else {
-            setTimeout(async () => {
-                try {
-                    let tempName = await contract.getName()
-                    if (tempName === name) {
-                        getName(n - 1)
-                    } else {
-                        setName(tempName)
-                        setSaveMethodLoading(false)
-                        return;
-                    }
-                } catch (error) {
-                    setSaveMethodLoading(false)
-                    return;
-                }
-            }, 2000);
+        } catch (error) {
+            setSaveMethodLoading(false)
+            return;
         }
     }
 
     const handleSubmit = async () => {
         dispatch(setLoading(true))
-        await contract.setName(nameString)
+        let tx = await contract.setName(nameString)
+        await tx.wait();
         dispatch(setLoading(false))
         getName()
         setNameString("")
